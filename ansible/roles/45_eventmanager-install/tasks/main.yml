@@ -15,7 +15,7 @@
 
 - name: TIMESTAMP -              🟢 START - INSTALL EVENT MANAGER
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 - name: PREREQUISITES -      📥  Installation Parameters"

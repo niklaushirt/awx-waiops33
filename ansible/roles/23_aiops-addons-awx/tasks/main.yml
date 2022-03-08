@@ -13,7 +13,7 @@
 
 - name: TIMESTAMP -              🟢 START - INSTALL AWX
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
   
@@ -27,4 +27,4 @@
   kubernetes.core.k8s:
     state: present
     namespace: awx
-    src: ./templates/awx/awx-deploy-cr.yml
+    src: ./templates/awx/awx-deploy-cr.yaml

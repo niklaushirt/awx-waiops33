@@ -32,12 +32,12 @@
 
 - name: TIMESTAMP -              🟢 START - GLOBAL
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 - name: TIMESTAMP -              🟢 START - INITIALIZATION
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 

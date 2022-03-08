@@ -444,8 +444,8 @@ Do this for your applications (RobotShop by default)
 * Click on  `Add a new Job`
 * Select `REST`/ `Configure`
 * Choose “bulk_replace”
-* Set Unique ID to “listenJob” (important!)
-* Set Provider to whatever you like (usually I set it to “listenJob” as well)
+* Set Unique ID to “restTopology” (important!)
+* Set Provider to whatever you like (usually I set it to “restTopology” as well)
 * `Save`
 
 
@@ -739,8 +739,8 @@ This is basically the same as for AI Manager as we need two separate instances o
 * Click `Add new job`
 * Under `REST`, click on `Configure`
 * Choose `bulk_replace` for `Job Type`
-* Set `Unique ID` to `listenJob` (important!)
-* Set `Provider` to `listenJob` 
+* Set `Unique ID` to `restTopology` (important!)
+* Set `Provider` to `restTopology` 
 * Click `Save`
 
 

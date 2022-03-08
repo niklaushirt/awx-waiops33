@@ -14,7 +14,7 @@
 
 - name: TIMESTAMP -              🟢 START - STORAGE CLASS
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 # *************************************************************************************************************************************************
@@ -98,7 +98,7 @@
       else
         if [ -z "${CLUSTER_NAME##*appdomain.cloud*}" ]; 
         then
-            echo "ibmc-block-gold"
+            echo "ibmc-file-gold-gid"
         else
           # Use Default Class (storageclass.kubernetes.io/is-default-class:true)
           SC_DEFAULT_STRING=$(oc get sc | grep "(default)")

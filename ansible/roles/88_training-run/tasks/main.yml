@@ -1,7 +1,7 @@
 
 - name: TIMESTAMP -              🟢 START - RUN ALL TRAININGS
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 - name: TOPOLOGY -        🚀 CREATE TOPOLOGY

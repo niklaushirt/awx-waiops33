@@ -43,7 +43,7 @@ oc delete -f ./ansible/templates/xxx/xxx
 oc delete -f ./ansible/templates/xxx/xxx
 
 
-oc delete -f ./ansible/templates/awx/awx-deploy-cr.yml
+oc delete -f ./ansible/templates/awx/awx-deploy-cr.yaml
 oc delete -f ./ansible/templates/awx/operator-install.yaml
 oc delete -f ./ansible/templates/waiops-demo-ui/delete-cp4waiops-demo.yaml
 oc delete -f ./ansible/templates/waiops-toolbox/create-waiops-toolbox.yaml

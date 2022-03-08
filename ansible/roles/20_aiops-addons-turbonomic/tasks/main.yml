@@ -11,7 +11,7 @@
 
 - name: TIMESTAMP -              🟢 START - INSTALL TURBONOMIC
   debug: 
-    msg="{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+    msg="{{ lookup('pipe','date +%d.%m.%Y---%H:%M:%S') }}"
 
 
 
