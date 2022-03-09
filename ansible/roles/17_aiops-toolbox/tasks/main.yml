@@ -13,7 +13,7 @@
 
 
 - name: DEMO-UI -      👓 Load parameters
-  include_vars: ../00_config_cp4waiops.yaml
+  include_vars: ./00_config_cp4waiops.yaml
 
 
 
