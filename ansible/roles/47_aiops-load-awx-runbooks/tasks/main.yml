@@ -82,10 +82,21 @@
 
 
 
+- name: AWX Runbook Content -            🚀 Wait for AWX Project
+  shell: |
+    sleep 60
+    export STATUS=$(curl -X "GET" -s "$AWX_URL/api/v2/projects/" -u "admin:$ADMIN_PASSWORD" --insecure|jq -c '.results[]| select( .name == "CP4WAIOPS Runbooks")|.status')
+    echo "$STATUS"
+  ignore_errors: yes
+  register: STATUS
+
+- name: AWX Runbook Content -            💾 Set Fact Project Status - {{ STATUS.stdout }} 
+  set_fact: STATUS={{ STATUS.stdout }} 
 
 
 
-- name: AWX Runbook Content -            🚀 Create AWX Inventory
+
+- name: AWX Runbook Content -            🚀 Create AWX Inventory (Project is {{STATUS}})
   shell: |
     export result=$(curl -X "POST" -s "{{ AWX_URL }}/api/v2/inventories/" -u "admin:{{ AWX_PWD }}" --insecure \
     -H 'content-type: application/json' \

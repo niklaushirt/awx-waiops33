@@ -31,7 +31,7 @@ echo ""
 echo "   ------------------------------------------------------------------------------------------------------------------------------"
 echo "   🚀  ❎ Closing existing Alerts..."
 echo "   ------------------------------------------------------------------------------------------------------------------------------"
-export USER_PASS="$(oc get secret aiops-ir-core-ncodl-api-secret -o jsonpath='{.data.username}' | base64 --decode):$(oc get secret aiops-ir-core-ncodl-api-secret -o jsonpath='{.data.password}' | base64 --decode)"
+export USER_PASS="$(oc get secret -n $WAIOPS_NAMESPACE aiops-ir-core-ncodl-api-secret -o jsonpath='{.data.username}' | base64 --decode):$(oc get secret aiops-ir-core-ncodl-api-secret -o jsonpath='{.data.password}' | base64 --decode)"
 oc create route reencrypt datalayer-api -n $WAIOPS_NAMESPACE  --service=aiops-ir-core-ncodl-api --port=secure-port --insecure-policy=Redirect --wildcard-policy=None
 sleep 2
 export DATALAYER_ROUTE=$(oc get route  -n $WAIOPS_NAMESPACE datalayer-api  -o jsonpath='{.status.ingress[0].host}')

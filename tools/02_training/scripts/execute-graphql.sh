@@ -51,16 +51,13 @@ if [[ $ZEN_TOKEN == "" ]]; then
       ZEN_LOGIN_MESSAGE=$(echo "${ZEN_LOGIN_RESPONSE}" | jq -r .message)
 
       if [ "${ZEN_LOGIN_MESSAGE}" != "success" ]; then
-      echo "Login failed: ${ZEN_LOGIN_MESSAGE}" 1>&2
-
-      exit 2
+            echo "Login failed: ${ZEN_LOGIN_MESSAGE}"
+            exit 2
       fi
 
       ZEN_TOKEN=$(echo "${ZEN_LOGIN_RESPONSE}" | jq -r .token)
-      echo "${ZEN_TOKEN}"
-
-      echo "Sucessfully logged in" 1>&2
-
+      #echo "${ZEN_TOKEN}"
+      echo "Sucessfully logged in" 
       echo ""
 fi
 

@@ -7,17 +7,17 @@
 - name: TRAINING CREATE EVENTS -        🚀 CREATE AND LAUNCH TEMPORAL GROUPING CONFIGURATION
   shell: |
     set -x
-    export $ROUTE=""
+    export ROUTE=""
     pwd
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Create Analysis Definiton: Temporal Grouping"
     export FILE_NAME=create-analysis-TG.graphql
     ../tools/02_training/scripts/execute-graphql.sh
 
 
-    echo "  ***************************************************************************************************************************************************"
-    echo "   🛠️  Run Analysis: Temporal Grouping"
+    #echo "***************************************************************************************************************************************************"
+    #echo "   🛠️  Run Analysis: Temporal Grouping"
     #export FILE_NAME=run-analysis-TG.graphql
     #../tools/02_training/scripts/execute-graphql.sh
 

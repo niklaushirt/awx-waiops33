@@ -10,7 +10,8 @@
 - name: TRAINING CREATE LAD -        🚀 CREATE LAD CONFIGURATION
   shell: |
     set -x
-    
+    export ROUTE=""
+
     if [[ ! $ROUTE =~ "ai-platform-api" ]]; then
           echo "       🛠️  Create Route"
           oc create route passthrough ai-platform-api -n $WAIOPS_NAMESPACE  --service=aimanager-aio-ai-platform-api-server --port=4000 --insecure-policy=Redirect --wildcard-policy=None
@@ -54,13 +55,13 @@
           echo ""
     fi
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Turn off RSA - Log Anomaly Statistical Baseline"
     export FILE_NAME=deactivate-analysis-RSA.graphql
     ../tools/02_training/scripts/execute-graphql.sh
 
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Create Data Set: Log Anomaly Detection"
     echo "     "	
     echo "      📥 Launch Query for file: create-dataset-LAD.graphql"	
@@ -85,7 +86,7 @@
 
 
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Create Analysis Definiton: Log Anomaly Detection"
     echo "     "	
     echo "      📥 Launch Query for file: create-analysis-LAD.graphql"	

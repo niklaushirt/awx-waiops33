@@ -98,7 +98,7 @@
       else
         if [ -z "${CLUSTER_NAME##*appdomain.cloud*}" ]; 
         then
-            echo "ibmc-file-gold-gid"
+            echo "ibmc-block-gold"
         else
           # Use Default Class (storageclass.kubernetes.io/is-default-class:true)
           SC_DEFAULT_STRING=$(oc get sc | grep "(default)")

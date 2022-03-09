@@ -1,4 +1,4 @@
-echo "Starting..."
+echo "Create Rules - Starting..."
 export WAIOPS_NAMESPACE=$(oc get po -A|grep aimanager-operator |awk '{print$1}')
 export EVTMGR_NAMESPACE=$(oc get po -A|grep noi-operator |awk '{print$1}')
 
@@ -15,7 +15,7 @@ oc create route reencrypt topology-merge -n $WAIOPS_NAMESPACE --insecure-policy=
 export MERGE_ROUTE="https://"$(oc get route -n $WAIOPS_NAMESPACE topology-merge -o jsonpath={.spec.host})
 
 
-echo "URL: https://topology-merge-$WAIOPS_NAMESPACE.$CLUSTER_NAME/1.0/merge/"
+echo "URL: $MERGE_ROUTE/1.0/merge/"
 echo "LOGIN: $LOGIN"
 
 
@@ -58,13 +58,13 @@ curl -X "POST" "$MERGE_ROUTE/1.0/merge/rules" --insecure \
 
 echo "Disable RULE k8ServiceName..."
 
-export RULE_ID=$(curl "https://topology-merge-$WAIOPS_NAMESPACE.$CLUSTER_NAME/1.0/merge/rules?ruleType=matchTokensRule&_filter=name=k8ServiceName&_include_count=false&_field=*" --insecure \
+export RULE_ID=$(curl "$MERGE_ROUTE/1.0/merge/rules?ruleType=matchTokensRule&_filter=name=k8ServiceName&_include_count=false&_field=*" -s --insecure \
      -H 'X-TenantID: cfd95b7e-3bc7-4006-a4a8-a73a79c71255' \
      -u $LOGIN| jq -r "._items[0]._id")
 
 
 
-curl -XPUT "https://topology-merge-$WAIOPS_NAMESPACE.$CLUSTER_NAME/1.0/merge/rules/$RULE_ID" --insecure \
+curl -XPUT "$MERGE_ROUTE/1.0/merge/rules/$RULE_ID" -s --insecure \
     --header 'Content-Type: application/json' \
     --header 'X-TenantID: cfd95b7e-3bc7-4006-a4a8-a73a79c71255' \
     -u $LOGIN \

@@ -6,15 +6,16 @@
 - name: TRAINING CREATE SNOW -        🚀 CREATE SNOW CONFIGURATION
   shell: |
     set -x
-    
+    export ROUTE=""
+
     pwd
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Create Analysis Definiton: Change Risk"
     export FILE_NAME=create-analysis-CR.graphql
     ../tools/02_training/scripts/execute-graphql.sh
 
-    echo "  ***************************************************************************************************************************************************"
+    echo "***************************************************************************************************************************************************"
     echo "   🛠️  Create Analysis Definiton: Similar Incidents"
     export FILE_NAME=create-analysis-SI.graphql
     ../tools/02_training/scripts/execute-graphql.sh

@@ -27,4 +27,4 @@
   kubernetes.core.k8s:
     state: present
     namespace: awx
-    src: ./templates/awx/awx-deploy-cr.yaml
+    src: ./templates/awx/awx-deploy-cr.yml

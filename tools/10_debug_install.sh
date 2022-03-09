@@ -1172,22 +1172,29 @@ menu_ssl_certs() {
       echo "    🚀  Patching Certs, new method" 
       echo "   --------------------------------------------------------------------------------------------"
 
-IAF_STORAGE=$(oc get AutomationUIConfig -n $WAIOPS_NAMESPACE -o jsonpath='{ .items[*].spec.storage.class }')
-oc get -n $WAIOPS_NAMESPACE AutomationUIConfig iaf-system -oyaml > iaf-system-backup.yaml
-oc delete -n $WAIOPS_NAMESPACE AutomationUIConfig iaf-system
+            oc project $WAIOPS_NAMESPACE
+            AUTO_UI_INSTANCE=$(oc get AutomationUIConfig -n $WAIOPS_NAMESPACE --no-headers -o custom-columns=":metadata.name")
+            IAF_STORAGE=$(oc get AutomationUIConfig -n $WAIOPS_NAMESPACE -o jsonpath='{ .items[*].spec.zenService.storageClass }')
+            ZEN_STORAGE=$(oc get AutomationUIConfig -n $WAIOPS_NAMESPACE -o jsonpath='{ .items[*].spec.zenService.zenCoreMetaDbStorageClass }')
+            oc get -n $WAIOPS_NAMESPACE AutomationUIConfig $AUTO_UI_INSTANCE --ignore-not-found -o yaml > /tmp/AutomationUIConfig-backup-$(date +%Y%m%d-%H%M).yaml
+            oc delete -n $WAIOPS_NAMESPACE AutomationUIConfig $AUTO_UI_INSTANCE
+
 cat <<EOF | oc apply -f -
 apiVersion: core.automation.ibm.com/v1beta1
 kind: AutomationUIConfig
 metadata:
-  name: iaf-system
+  name: $AUTO_UI_INSTANCE
   namespace: $WAIOPS_NAMESPACE
 spec:
   description: AutomationUIConfig for cp4waiops
   license:
     accept: true
-  version: v1.0
-  storage:
-    class: $IAF_STORAGE
+  version: v1.3
+  zen: true
+  zenService:
+    iamIntegration: true
+    storageClass: $IAF_STORAGE
+    zenCoreMetaDbStorageClass: $ZEN_STORAGE
   tls:
     caSecret:
       key: ca.crt
@@ -1195,43 +1202,46 @@ spec:
     certificateSecret:
       secretName: external-tls-secret
 EOF
-rm iaf-system-backup.yaml
+
 
 
       echo "   --------------------------------------------------------------------------------------------"
       echo "    🚀  Patching Certs, old method first" 
       echo "   --------------------------------------------------------------------------------------------"
 
-# collect certificate from OpenShift ingress
-ingress_pod=$(oc get secrets -n openshift-ingress | grep tls | grep -v router-metrics-certs-default | awk '{print $1}')
-oc get secret -n openshift-ingress -o 'go-template={{index .data "tls.crt"}}' ${ingress_pod} | base64 -d > cert.crt
-oc get secret -n openshift-ingress -o 'go-template={{index .data "tls.key"}}' ${ingress_pod} | base64 -d > cert.key
-oc get secret -n $WAIOPS_NAMESPACE iaf-system-automationui-aui-zen-ca -o 'go-template={{index .data "ca.crt"}}'| base64 -d > ca.crt
-# backup existing secret
-oc get secret -n $WAIOPS_NAMESPACE external-tls-secret -o yaml > external-tls-secret$(date +%Y-%m-%dT%H:%M:%S).yaml
-# delete existing secret
-oc delete secret -n $WAIOPS_NAMESPACE external-tls-secret
-# create new secret
-oc create secret generic -n $WAIOPS_NAMESPACE external-tls-secret --from-file=ca.crt=ca.crt --from-file=cert.crt=cert.crt --from-file=cert.key=cert.key --dry-run=client -o yaml | oc apply -f -
-#oc create secret generic -n $WAIOPS_NAMESPACE external-tls-secret --from-file=cert.crt=cert.crt --from-file=cert.key=cert.key --dry-run=client -o yaml | oc apply -f -
-# scale down nginx
-REPLICAS=2
-oc scale Deployment/ibm-nginx --replicas=0
-# scale up nginx
-sleep 3
-oc scale Deployment/ibm-nginx --replicas=${REPLICAS}
-rm cert.crt
-rm cert.key
-rm ca.crt
-rm external-tls-secret
 
-NGINX_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "ibm-nginx" | grep "0/1" || true) 
-while  ([[  $NGINX_READY =~ "0/1" ]]); do 
-    NGINX_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "ibm-nginx" | grep "0/1" || true) 
-    echo "      ⭕ Nginx not ready. Waiting for 10 seconds...." && sleep 10; 
-done
+            ingress_pod=$(oc get secrets -n openshift-ingress | grep tls | grep -v router-metrics-certs-default | awk '{print $1}')
+            oc get secret -n openshift-ingress -o 'go-template={{index .data "tls.crt"}}' ${ingress_pod} | base64 -d > /tmp/cert.crt
+            oc get secret -n openshift-ingress -o 'go-template={{index .data "tls.key"}}' ${ingress_pod} | base64 -d > /tmp/cert.key
+            oc get secret -n $WAIOPS_NAMESPACE iaf-system-automationui-aui-zen-ca -o 'go-template={{index .data "ca.crt"}}'| base64 -d > /tmp/ca.crt
 
-oc delete pod $(oc get po -n $WAIOPS_NAMESPACE|grep slack|awk '{print$1}') -n $WAIOPS_NAMESPACE --grace-period 0 --force
+            oc get secret -n $WAIOPS_NAMESPACE external-tls-secret --ignore-not-found -o yaml > /tmp/external-tls-secret-backup-$(date +%Y%m%d-%H%M).yaml
+            oc delete secret -n $WAIOPS_NAMESPACE --ignore-not-found external-tls-secret
+            oc create secret generic -n $WAIOPS_NAMESPACE external-tls-secret --from-file=ca.crt=/tmp/ca.crt --from-file=cert.crt=/tmp/cert.crt --from-file=cert.key=/tmp/cert.key --dry-run=client -o yaml | oc apply -f -
+            REPLICAS=2
+            oc scale Deployment/ibm-nginx --replicas=0
+            sleep 3
+            oc scale Deployment/ibm-nginx --replicas=${REPLICAS}
+            rm /tmp/cert.crt
+            rm /tmp/cert.key
+            rm /tmp/ca.crt
+            rm /tmp/external-tls-secret.yaml
+
+
+
+            NGINX_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "ibm-nginx" | grep "0/1" || true) 
+            while  ([[  $NGINX_READY =~ "0/1" ]]); do 
+            NGINX_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "ibm-nginx" | grep "0/1" || true) 
+            echo "      ⭕ Nginx not ready. Waiting for 10 seconds...." && sleep 10; 
+            done
+
+            oc delete pod $(oc get po -n $WAIOPS_NAMESPACE|grep slack|awk '{print$1}') -n $WAIOPS_NAMESPACE --grace-period 0 --force
+
+            SLACK_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "slack" | grep "0/1" || true) 
+            while  ([[  $SLACK_READY =~ "0/1" ]]); do 
+            SLACK_READY=$(oc get pod -n $WAIOPS_NAMESPACE | grep "slack" | grep "0/1" || true) 
+            echo "      ⭕ Slack not ready. Waiting for 10 seconds...." && sleep 10; 
+            done
 
       else
         echo "    ⚠️  Skipping"
